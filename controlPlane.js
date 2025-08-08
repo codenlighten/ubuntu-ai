@@ -1,5 +1,6 @@
 import { exec } from "child_process";
 import fs from "fs/promises";
+import axios from "axios";
 
 // A helper function to promisify exec
 const execPromise = (command) => {
@@ -68,6 +69,17 @@ export async function executeSystemAction(step) {
       // Note: Running arbitrary commands is powerful but risky.
       // The AGENT_USER helps contain the potential impact.
       result = await execPromise(details.cmd);
+      break;
+
+    case "browse_web":
+      try {
+        const response = await axios.get(details.url, { timeout: 5000 });
+        // Basic HTML tag stripping
+        const textContent = response.data.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ').trim();
+        result = { status: 'success', content: textContent.substring(0, 4000) }; // Truncate to avoid huge context
+      } catch (error) {
+        result = { status: 'error', message: error.message };
+      }
       break;
 
     case "get_system_stats":

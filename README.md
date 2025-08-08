@@ -52,6 +52,7 @@ The agent can perform the following actions:
 - `configure_file`: Writes content to a specified file.
 - `read_file`: Reads the content of a specified file.
 - `get_system_stats`: Retrieves current disk, memory, and load statistics.
+- `browse_web`: Fetches the textual content of a given URL.
 - `enable_service`: Enables and starts a `systemd` service.
 - `open_port`: Opens a port in the UFW firewall.
 - `run_cmd`: Executes a shell command.

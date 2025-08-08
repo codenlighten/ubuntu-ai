@@ -37,7 +37,7 @@ async function main() {
     }
 
     const step = await generateStructuredResponse({
-      query: "Given the goal and history, decide the next single system configuration step. Be methodical. If you need to read a file, use the 'read_file' action first.",
+      query: "Given the goal and history, decide the next single system configuration step. Be methodical. If you need to read a file, use 'read_file'. If you encounter an error or need more information, use 'browse_web' to research solutions or documentation.",
       context: JSON.stringify({ goal, history }),
       schema: systemActionSchema
     });
