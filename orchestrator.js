@@ -37,7 +37,7 @@ async function main() {
     }
 
     const step = await generateStructuredResponse({
-      query: "Given the goal and history, decide the next single system configuration step. Be methodical. For complex sub-tasks, use 'spawn_agent' to delegate to a specialist agent. For simpler tasks, use 'create_script' and 'execute_script'. Use 'browse_web' for research and 'read_file' to inspect state or sub-agent history.",
+      query: "Given the goal and history, decide the next single system configuration step. Be methodical. Your primary tools for achieving goals are 'create_script' and 'execute_script'. If you need information, use 'browse_web' for research or 'read_file' to inspect local files. Only for genuinely complex sub-tasks that are different from your current goal should you use 'spawn_agent' to delegate. Do not spawn an agent with the same goal as your own.",
       context: JSON.stringify({ goal, history }),
       schema: systemActionSchema
     });

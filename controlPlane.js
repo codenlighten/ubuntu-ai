@@ -100,24 +100,25 @@ export async function executeSystemAction(step) {
 
     case "spawn_agent":
       try {
-        const subAgentHistoryFile = `history-${Date.now()}.json`;
-        const subAgentGoal = details.goal;
-
-        const subAgent = spawn('node', ['orchestrator.js'], {
+        const newGoal = details.goal;
+        if (newGoal === process.env.GOAL) {
+          result = { status: 'error', message: 'Error: Cannot spawn a sub-agent with the exact same goal. Please break down the task first.' };
+          break;
+        }
+        const historyFile = `history-${Date.now()}.json`;
+        const agentProcess = spawn('node', ['orchestrator.js'], {
           detached: true,
-          stdio: 'ignore', // Prevent parent from waiting for child's stdio
+          stdio: 'ignore',
           env: {
-            ...process.env, // Inherit parent's env
-            GOAL: subAgentGoal,
-            HISTORY_FILE: subAgentHistoryFile
+            ...process.env,
+            GOAL: newGoal,
+            HISTORY_FILE: historyFile
           }
         });
-
-        subAgent.unref(); // Allow parent to exit independently
-
-        result = { status: 'success', message: `Spawned new agent with goal: '${subAgentGoal}'. History is in '${subAgentHistoryFile}'.` };
-      } catch (error) {
-        result = { status: 'error', message: error.message };
+        agentProcess.unref();
+        result = { status: 'success', message: `Spawned new agent with goal: '${newGoal}'. History is in '${historyFile}'.` };
+      } catch (e) {
+        result = { status: 'error', message: e.message };
       }
       break;
 
