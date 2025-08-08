@@ -6,7 +6,7 @@ import { systemActionSchema } from "./systemActionSchema.js";
 import { executeSystemAction } from "./controlPlane.js";
 import fs from "fs/promises";
 
-const HISTORY_FILE = "history.json";
+const HISTORY_FILE = process.env.HISTORY_FILE || 'history.json';
 const STOP_SIGNAL_FILE = process.env.STOP_SIGNAL_FILE || 'STOP';
 
 async function main() {
@@ -37,7 +37,7 @@ async function main() {
     }
 
     const step = await generateStructuredResponse({
-      query: "Given the goal and history, decide the next single system configuration step. Be methodical. If a task is complex or not covered by existing actions, create a script with 'create_script' and then run it with 'execute_script'. Use 'browse_web' for research and 'read_file' to inspect configs.",
+      query: "Given the goal and history, decide the next single system configuration step. Be methodical. For complex sub-tasks, use 'spawn_agent' to delegate to a specialist agent. For simpler tasks, use 'create_script' and 'execute_script'. Use 'browse_web' for research and 'read_file' to inspect state or sub-agent history.",
       context: JSON.stringify({ goal, history }),
       schema: systemActionSchema
     });

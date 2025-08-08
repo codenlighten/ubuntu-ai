@@ -13,6 +13,7 @@ export const systemActionSchema = {
         "browse_web",
         "create_script",
         "execute_script",
+        "spawn_agent",
         "enable_service",
         "open_port",
         "run_cmd",
@@ -31,7 +32,8 @@ export const systemActionSchema = {
         port:     { type: "number" },
         cmd:      { type: "string" },
         url:      { type: "string" },
-        filename: { type: "string" }
+        filename: { type: "string" },
+        goal:     { type: "string" }
       }
     }
   },

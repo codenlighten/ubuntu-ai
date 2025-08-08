@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { exec, spawn } from "child_process";
 import fs from "fs/promises";
 import path from "path";
 import axios from "axios";
@@ -92,6 +92,29 @@ export async function executeSystemAction(step) {
         await fs.writeFile(scriptPath, details.content);
         await fs.chmod(scriptPath, '755'); // Make it executable
         result = { status: 'success', message: `Script '${details.filename}' created.` };
+      } catch (error) {
+        result = { status: 'error', message: error.message };
+      }
+      break;
+
+    case "spawn_agent":
+      try {
+        const subAgentHistoryFile = `history-${Date.now()}.json`;
+        const subAgentGoal = details.goal;
+
+        const subAgent = spawn('node', ['orchestrator.js'], {
+          detached: true,
+          stdio: 'ignore', // Prevent parent from waiting for child's stdio
+          env: {
+            ...process.env, // Inherit parent's env
+            GOAL: subAgentGoal,
+            HISTORY_FILE: subAgentHistoryFile
+          }
+        });
+
+        subAgent.unref(); // Allow parent to exit independently
+
+        result = { status: 'success', message: `Spawned new agent with goal: '${subAgentGoal}'. History is in '${subAgentHistoryFile}'.` };
       } catch (error) {
         result = { status: 'error', message: error.message };
       }

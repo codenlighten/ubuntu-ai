@@ -7,6 +7,7 @@ This project is an AI-powered agent designed to manage and administer an Ubuntu 
 - **Autonomous Operation:** The agent runs in a continuous loop to achieve its goal, effectively operating in a fully autonomous "auto mode."
 - **Owner Control:** The owner can gracefully stop the agent at any time by sending a simple signal, without needing to kill the process.
 - **Self-Improvement via Scripting:** The agent can write and execute its own shell scripts to perform complex tasks or create new tools for itself, operating within a secure `scripts/` directory.
+- **Inter-Agent Communication:** The agent can spawn sub-agents to delegate complex tasks, allowing for parallel work and hierarchical problem-solving. Each sub-agent operates with its own independent history.
 - **Goal-Oriented Operation:** Provide a high-level goal (e.g., "Harden system security and install monitoring tools"), and the agent will devise and execute a plan.
 - **Persistent History:** The agent saves its action history in `history.json`, allowing it to learn from past actions and resume its work after a restart.
 - **Secure Execution:** Actions are executed by a designated, non-root user (`AGENT_USER`) where possible, minimizing security risks.
@@ -56,6 +57,7 @@ The agent can perform the following actions:
 - `browse_web`: Fetches the textual content of a given URL.
 - `create_script`: Creates a new executable script in the `scripts/` directory.
 - `execute_script`: Runs a script from the `scripts/` directory.
+- `spawn_agent`: Deploys a new, independent agent with a specific goal.
 - `enable_service`: Enables and starts a `systemd` service.
 - `open_port`: Opens a port in the UFW firewall.
 - `run_cmd`: Executes a shell command.
