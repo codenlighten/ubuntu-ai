@@ -95,6 +95,9 @@ export async function executeSystemAction(step) {
           content = `#!/bin/bash\n${details.cmd}`;
         }
 
+        // Ensure the scripts directory exists
+        await fs.mkdir('scripts', { recursive: true });
+
         const scriptPath = path.join('scripts', path.basename(filename));
         if (path.dirname(scriptPath) !== 'scripts') {
           throw new Error('Script path is outside of the scripts directory.');
