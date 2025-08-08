@@ -11,6 +11,8 @@ export const systemActionSchema = {
         "read_file",
         "get_system_stats",
         "browse_web",
+        "create_script",
+        "execute_script",
         "enable_service",
         "open_port",
         "run_cmd",
@@ -28,7 +30,8 @@ export const systemActionSchema = {
         service:  { type: "string" },
         port:     { type: "number" },
         cmd:      { type: "string" },
-        url:      { type: "string" }
+        url:      { type: "string" },
+        filename: { type: "string" }
       }
     }
   },

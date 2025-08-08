@@ -1,5 +1,6 @@
 import { exec } from "child_process";
 import fs from "fs/promises";
+import path from "path";
 import axios from "axios";
 
 // A helper function to promisify exec
@@ -77,6 +78,32 @@ export async function executeSystemAction(step) {
         // Basic HTML tag stripping
         const textContent = response.data.replace(/<[^>]*>/g, ' ').replace(/\s{2,}/g, ' ').trim();
         result = { status: 'success', content: textContent.substring(0, 4000) }; // Truncate to avoid huge context
+      } catch (error) {
+        result = { status: 'error', message: error.message };
+      }
+      break;
+
+    case "create_script":
+      try {
+        const scriptPath = path.join('scripts', path.basename(details.filename));
+        if (path.dirname(scriptPath) !== 'scripts') {
+          throw new Error('Script path is outside of the scripts directory.');
+        }
+        await fs.writeFile(scriptPath, details.content);
+        await fs.chmod(scriptPath, '755'); // Make it executable
+        result = { status: 'success', message: `Script '${details.filename}' created.` };
+      } catch (error) {
+        result = { status: 'error', message: error.message };
+      }
+      break;
+
+    case "execute_script":
+      try {
+        const scriptPath = path.join('scripts', path.basename(details.filename));
+        if (path.dirname(scriptPath) !== 'scripts') {
+          throw new Error('Script path is outside of the scripts directory.');
+        }
+        result = await execPromise(`bash ${scriptPath}`);
       } catch (error) {
         result = { status: 'error', message: error.message };
       }
