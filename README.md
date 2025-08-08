@@ -14,7 +14,63 @@ This project is an AI-powered agent designed to manage and administer an Ubuntu 
 - **Structured Actions:** The agent operates on a strict, predefined schema of actions, preventing arbitrary command execution and ensuring predictable behavior.
 - **Extensible:** New capabilities can be added by defining them in the `systemActionSchema.js` and implementing them in `controlPlane.js`.
 
-## Setup
+## Deployment
+
+Deploying the agent to a fresh Ubuntu server is automated with the `deploy.sh` script.
+
+1.  **Run the Deployment Script:**
+
+    On your new server, download and run the deployment script:
+
+    ```bash
+    wget https://raw.githubusercontent.com/codenlighten/ubuntu-ai/main/deploy.sh
+    chmod +x deploy.sh
+    sudo ./deploy.sh
+    ```
+
+    This script will:
+    - Install all necessary dependencies (Node.js, npm, git).
+    - Clone the repository into `/opt/ubuntu-ai-agent`.
+    - Install Node.js packages.
+    - Create a secure, non-root `agent_user`.
+    - Configure the necessary `sudo` permissions for the agent.
+    - Create a `.env` file from the example.
+
+2.  **Configure the Agent:**
+
+    You must add your OpenAI API key and set the agent's high-level goal in the `.env` file:
+
+    ```bash
+    sudo nano /opt/ubuntu-ai-agent/.env
+    ```
+
+3.  **Install and Start the Service:**
+
+    To run the agent persistently in the background, install and enable the provided `systemd` service:
+
+    ```bash
+    # Copy the service file to the systemd directory
+    sudo cp /opt/ubuntu-ai-agent/service/ubuntu-agent.service /etc/systemd/system/
+
+    # Reload the systemd daemon, enable the service to start on boot, and start it now
+    sudo systemctl daemon-reload
+    sudo systemctl enable ubuntu-agent.service
+    sudo systemctl start ubuntu-agent.service
+    ```
+
+4.  **Monitor the Agent:**
+
+    You can check the agent's status and view its logs using `systemctl` and `journalctl`:
+
+    ```bash
+    # Check status
+    sudo systemctl status ubuntu-agent.service
+
+    # View live logs
+    sudo journalctl -u ubuntu-agent.service -f
+    ```
+
+## Local Development
 
 1.  **Clone the repository.**
 2.  **Install dependencies:**

@@ -1,0 +1,18 @@
+[Unit]
+Description=Ubuntu AI System Admin Agent
+After=network.target
+
+[Service]
+Type=simple
+User=agent_user
+Group=agent_user
+WorkingDirectory=/opt/ubuntu-ai-agent
+ExecStart=/usr/bin/node orchestrator.js
+Restart=on-failure
+RestartSec=5
+
+# Environment variables can be loaded from a file
+EnvironmentFile=/opt/ubuntu-ai-agent/.env
+
+[Install]
+WantedBy=multi-user.target
