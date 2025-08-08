@@ -7,6 +7,7 @@ import { executeSystemAction } from "./controlPlane.js";
 import fs from "fs/promises";
 
 const HISTORY_FILE = "history.json";
+const STOP_SIGNAL_FILE = process.env.STOP_SIGNAL_FILE || 'STOP';
 
 async function main() {
   const goal = process.env.GOAL;
@@ -24,6 +25,17 @@ async function main() {
   let done = false;
 
   while (!done) {
+    // Check for stop signal file
+    try {
+        await fs.access(STOP_SIGNAL_FILE);
+        console.log(`Stop signal file '${STOP_SIGNAL_FILE}' found. Shutting down gracefully.`);
+        await fs.unlink(STOP_SIGNAL_FILE); // Clean up the file for the next run
+        done = true;
+        continue;
+    } catch (e) {
+        // File doesn't exist, continue normally
+    }
+
     const step = await generateStructuredResponse({
       query: "Given the goal and history, decide the next single system configuration step. Be methodical. If you need to read a file, use the 'read_file' action first.",
       context: JSON.stringify({ goal, history }),

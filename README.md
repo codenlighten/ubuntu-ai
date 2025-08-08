@@ -4,6 +4,8 @@ This project is an AI-powered agent designed to manage and administer an Ubuntu 
 
 ## Core Features
 
+- **Autonomous Operation:** The agent runs in a continuous loop to achieve its goal, effectively operating in a fully autonomous "auto mode."
+- **Owner Control:** The owner can gracefully stop the agent at any time by sending a simple signal, without needing to kill the process.
 - **Goal-Oriented Operation:** Provide a high-level goal (e.g., "Harden system security and install monitoring tools"), and the agent will devise and execute a plan.
 - **Persistent History:** The agent saves its action history in `history.json`, allowing it to learn from past actions and resume its work after a restart.
 - **Secure Execution:** Actions are executed by a designated, non-root user (`AGENT_USER`) where possible, minimizing security risks.
@@ -21,6 +23,7 @@ This project is an AI-powered agent designed to manage and administer an Ubuntu 
     - `OPENAI_API_KEY`: Your API key for the OpenAI service.
     - `GOAL`: The high-level objective for the agent.
     - `AGENT_USER`: (Optional) The local system user the agent should run as. Defaults to `root` if not set.
+    - `STOP_SIGNAL_FILE`: (Optional) The name of the file used to signal a shutdown. Defaults to `STOP`.
 
 4.  **Run the Agent:**
     ```bash
@@ -28,6 +31,16 @@ This project is an AI-powered agent designed to manage and administer an Ubuntu 
     ```
 
 For continuous operation, it is recommended to run the orchestrator as a `systemd` service (see `overview.md` for an example).
+
+## Auto Mode and Owner Control
+
+The agent is designed to run autonomously in a continuous loop. To stop the agent, you don't need to find and kill the process. Instead, you can create a signal file in the agent's directory. By default, this file is named `STOP`.
+
+To stop the agent, simply run this command in the project directory:
+```bash
+touch STOP
+```
+On its next cycle, the agent will detect this file, shut down gracefully, and remove the file so it's ready for the next run.
 
 ## Supported Actions
 
