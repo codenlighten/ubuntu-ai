@@ -1,0 +1,14 @@
+{
+  "name": "agent-orchestrator",
+  "version": "1.0.0",
+  "description": "Multi-agent orchestrator using OpenAI and structured JSON actions",
+  "main": "orchestrator.js",
+  "type": "module",
+  "scripts": {
+    "start": "node orchestrator.js"
+  },
+  "dependencies": {
+    "openai": "^4.0.0",
+    "dotenv": "^16.0.0"
+  }
+}
