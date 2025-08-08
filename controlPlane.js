@@ -86,13 +86,22 @@ export async function executeSystemAction(step) {
 
     case "create_script":
       try {
-        const scriptPath = path.join('scripts', path.basename(details.filename));
+        let filename = details.filename;
+        let content = details.content;
+
+        // If a 'cmd' is provided instead, create a script from it
+        if (details.cmd && !content) {
+          filename = `script-${Date.now()}.sh`;
+          content = `#!/bin/bash\n${details.cmd}`;
+        }
+
+        const scriptPath = path.join('scripts', path.basename(filename));
         if (path.dirname(scriptPath) !== 'scripts') {
           throw new Error('Script path is outside of the scripts directory.');
         }
-        await fs.writeFile(scriptPath, details.content);
+        await fs.writeFile(scriptPath, content);
         await fs.chmod(scriptPath, '755'); // Make it executable
-        result = { status: 'success', message: `Script '${details.filename}' created.` };
+        result = { status: 'success', message: `Script '${filename}' created.` };
       } catch (error) {
         result = { status: 'error', message: error.message };
       }
