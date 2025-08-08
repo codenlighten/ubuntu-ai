@@ -50,13 +50,14 @@ export async function executeSystemAction(step) {
       break;
 
     case "read_file":
-        try {
-            const content = await fs.readFile(details.path, 'utf-8');
-            result = { status: 'success', content };
-        } catch(e) {
-            result = { status: 'error', message: e.message };
-        }
-        break;
+      try {
+        const filePath = details.path || details.filename;
+        const content = await fs.readFile(filePath, 'utf-8');
+        result = { status: 'success', content };
+      } catch(e) {
+        result = { status: 'error', message: e.message };
+      }
+      break;
 
     case "enable_service":
       result = await execPromise(`${sudo} systemctl enable --now ${details.service}`);
