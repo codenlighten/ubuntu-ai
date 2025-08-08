@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { generateStructuredResponse } from "./structuredResponse.js";
+import { generateStructuredResponse } from "./StructuredResponse.js";
 import { systemActionSchema } from "./systemActionSchema.js";
 import { executeSystemAction } from "./controlPlane.js";
 import fs from "fs/promises";
