@@ -136,7 +136,8 @@ export async function executeSystemAction(step) {
 
     case "execute_script":
       try {
-        const scriptPath = path.join('scripts', path.basename(details.filename));
+        const scriptFile = details.path || details.filename;
+        const scriptPath = path.join('scripts', path.basename(scriptFile));
         if (path.dirname(scriptPath) !== 'scripts') {
           throw new Error('Script path is outside of the scripts directory.');
         }
