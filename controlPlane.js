@@ -210,6 +210,10 @@ export async function executeSystemAction(step) {
         };
         break;
 
+    case "finish":
+      console.log("Goal achieved. Terminating agent.");
+      process.exit(0);
+
     default:
       return { status: 'error', message: `Unknown action: ${action}` };
   }
