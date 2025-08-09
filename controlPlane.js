@@ -154,7 +154,7 @@ export async function executeSystemAction(step) {
         }
         await fs.writeFile(scriptPath, content);
         await fs.chmod(scriptPath, '755'); // Make it executable
-        result = { status: 'success', message: `Script '${filename}' created.` };
+        result = { status: 'success', filename: filename, message: `Script '${filename}' created.` };
       } catch (error) {
         result = { status: 'error', message: error.message };
       }
