@@ -17,6 +17,7 @@ export const systemActionSchema = {
         "enable_service",
         "open_port",
         "run_cmd",
+        "search_web",
         "finish"
       ]
     },
@@ -33,7 +34,10 @@ export const systemActionSchema = {
         cmd:      { type: "string" },
         url:      { type: "string" },
         filename: { type: "string" },
-        goal:     { type: "string" }
+        goal:     { type: "string" },
+        query:    { type: "string" },
+        topic:    { type: "string" },
+        subTopic: { type: "string" }
       }
     }
   },

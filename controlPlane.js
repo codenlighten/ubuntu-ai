@@ -2,6 +2,8 @@ import { exec, spawn } from "child_process";
 import fs from "fs/promises";
 import path from "path";
 import axios from "axios";
+import { searchGoogle } from "./google-search.js";
+import RelevantResults from "./RelevantResults.js";
 
 // A helper function to promisify exec
 const execPromise = (command) => {
@@ -80,6 +82,48 @@ export async function executeSystemAction(step) {
         result = { status: 'success', content: textContent.substring(0, 4000) }; // Truncate to avoid huge context
       } catch (error) {
         result = { status: 'error', message: error.message };
+      }
+      break;
+
+    case "search_web":
+      try {
+        const { query, topic, subTopic } = details;
+        if (!query) {
+          throw new Error("Search query is required for the 'search_web' action.");
+        }
+
+        // 1. Perform the search
+        const rawResults = await searchGoogle(query, 10); // Get top 10 results
+
+        if (!rawResults || rawResults.length === 0) {
+          result = { status: 'success', content: 'No search results found.' };
+          break;
+        }
+
+        // 2. Filter for relevance
+        const relevanceFilter = new RelevantResults(process.env.OPENAI_API_KEY);
+        const relevantResults = await relevanceFilter.filterByRelevance(
+          topic || query, // Fallback topic to query
+          subTopic || '', // Sub-topic can be empty
+          rawResults,
+          5 // Get top 5 most relevant
+        );
+
+        // 3. Format and return the results
+        if (relevantResults && relevantResults.length > 0) {
+          const formattedResults = relevantResults.map(item => {
+            return `Title: ${item.title}\nLink: ${item.link}\nSnippet: ${item.snippet}\nRelevance: ${item.relevanceScore}/10`;
+          }).join('\n\n---\n\n');
+          result = { status: 'success', content: formattedResults };
+        } else {
+          // If filtering returns nothing, provide the top raw results as a fallback
+          const fallbackResult = rawResults.slice(0, 3).map(item => {
+             return `Title: ${item.title}\nLink: ${item.link}\nSnippet: ${item.snippet}`;
+          }).join('\n\n---\n\n');
+          result = { status: 'success', content: `Could not determine relevance, providing top raw results:\n\n${fallbackResult}` };
+        }
+      } catch (error) {
+        result = { status: 'error', message: `Search failed: ${error.message}` };
       }
       break;
 
