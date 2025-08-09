@@ -10,7 +10,7 @@ const HISTORY_FILE = process.env.HISTORY_FILE || 'history.json';
 const STOP_SIGNAL_FILE = process.env.STOP_SIGNAL_FILE || 'STOP';
 
 async function main() {
-  const goal = process.env.MAIN_GOAL || 'Your main goal is to fully setup and secure the Ubuntu server. This includes updating packages, installing a firewall, setting up monitoring, and implementing security best practices. You are an autonomous agent and must complete this goal without assistance.';
+  const goal = process.env.GOAL || 'Your main goal is to fully setup and secure the Ubuntu server. This includes updating packages, installing a firewall, setting up monitoring, and implementing security best practices. You are an autonomous agent and must complete this goal without assistance.';
 
   const historyFilePath = 'history.json';
   const stopSignalFilePath = 'stop-agent.signal';
