@@ -53,7 +53,7 @@ async function main() {
     history.push({ role: 'assistant', content: JSON.stringify(step, null, 2) });
     console.log('→ Next action:', JSON.stringify(step, null, 2));
 
-    const result = await executeSystemAction(step.action, step.details);
+    const result = await executeSystemAction(step);
 
     history.push({ role: 'user', content: JSON.stringify(result, null, 2) });
     console.log('← Result:', JSON.stringify(result, null, 2));
