@@ -30,7 +30,7 @@ async function main() {
   console.log(`Starting agent with goal: "${goal}"`);
 
   let history = loadHistory();
-  let lastActionFailed = false;
+  let lastActionFailed = history.length > 0 && JSON.parse(history[history.length - 1].content).status !== 'success';
 
   const mainPrompt = "Given the goal and history, decide the next single system configuration step. Be methodical. Your primary tools are 'create_script' and 'execute_script'. When you use 'create_script', your very next action must be to run it with 'execute_script'. If you need information, use 'search_web' for research (provide a 'topic' and 'subTopic' for best results) or 'read_file' to inspect local files. Only for genuinely complex sub-tasks that are different from your current goal should you use 'spawn_agent' to delegate. Do not spawn an agent with the same goal as your own.";
   const errorPrompt = "The previous action failed. You are an expert Ubuntu system administrator. Your first step is to solve this using your own knowledge. Analyze the error in the history and formulate a new command to fix it. For example, if a package was not found, suggest a common alternative (e.g., for 'apache', suggest 'apache2'). Your next action should be a direct attempt to solve the problem. ONLY if your expert solution fails again should you use 'search_web' as a last resort. If the history shows your last two actions were failed attempts at the same problem, you MUST use 'search_web' to find external solutions. After searching, you must synthesize the results into a new action.";

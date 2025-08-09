@@ -21,6 +21,9 @@ sudo git pull
 echo "Installing/updating Node.js dependencies..."
 sudo npm install --production
 
+echo "Clearing old history file for a fresh start..."
+sudo rm -f history.json
+
 echo "Restarting the ubuntu-agent service..."
 sudo systemctl restart ubuntu-agent.service
 
