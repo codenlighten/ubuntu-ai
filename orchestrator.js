@@ -33,7 +33,7 @@ async function main() {
   let lastActionFailed = false;
 
   const mainPrompt = "Given the goal and history, decide the next single system configuration step. Be methodical. Your primary tools are 'create_script' and 'execute_script'. When you use 'create_script', your very next action must be to run it with 'execute_script'. If you need information, use 'browse_web' for research or 'read_file' to inspect local files. Only for genuinely complex sub-tasks that are different from your current goal should you use 'spawn_agent' to delegate. Do not spawn an agent with the same goal as your own.";
-  const errorPrompt = "The previous action failed. Analyze the error message in the history. If the error is 'Unable to locate package', you MUST use 'browse_web' to find the correct package name or installation method. Do not try the same package name again. For other errors, decide on a step to fix the problem. Once you have a fix, you may continue with the original goal.";
+  const errorPrompt = "The previous action failed. Analyze the error message in the history. If the error is 'Unable to locate package', you MUST use 'browse_web' to find the correct package name. If that search returns 'no results', you MUST try a new, more general search, like 'ubuntu server monitoring tools', to find alternative packages. Do not try to install a package that you cannot find. For other errors, decide on a step to fix the problem. Once you have a fix, you may continue with the original goal.";
 
   while (true) {
     if (fs.existsSync(stopSignalFilePath)) {
