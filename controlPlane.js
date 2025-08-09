@@ -2,8 +2,14 @@ import { exec, spawn } from "child_process";
 import fs from "fs/promises";
 import path from "path";
 import axios from "axios";
+import { fileURLToPath } from "url";
 import { searchGoogle } from "./google-search.js";
 import RelevantResults from "./RelevantResults.js";
+
+// Get the directory of the current module to build absolute paths
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Define a secure, absolute path for scripts
+const SCRIPTS_DIR = path.join(__dirname, 'scripts');
 
 // A helper function to promisify exec
 const execPromise = (command) => {
@@ -138,12 +144,13 @@ export async function executeSystemAction(step) {
           content = `#!/bin/bash\n${details.cmd}`;
         }
 
-        // Ensure the scripts directory exists
-        await fs.mkdir('scripts', { recursive: true });
+        // Ensure the absolute scripts directory exists
+        await fs.mkdir(SCRIPTS_DIR, { recursive: true });
 
-        const scriptPath = path.join('scripts', path.basename(filename));
-        if (path.dirname(scriptPath) !== 'scripts') {
-          throw new Error('Script path is outside of the scripts directory.');
+        const scriptPath = path.join(SCRIPTS_DIR, path.basename(filename));
+        // Security check to prevent path traversal
+        if (!scriptPath.startsWith(SCRIPTS_DIR)) {
+          throw new Error(`Attempted to write script outside of the designated scripts directory: ${scriptPath}`);
         }
         await fs.writeFile(scriptPath, content);
         await fs.chmod(scriptPath, '755'); // Make it executable
@@ -180,9 +187,10 @@ export async function executeSystemAction(step) {
     case "execute_script":
       try {
         const scriptFile = details.path || details.filename;
-        const scriptPath = path.join('scripts', path.basename(scriptFile));
-        if (path.dirname(scriptPath) !== 'scripts') {
-          throw new Error('Script path is outside of the scripts directory.');
+        const scriptPath = path.join(SCRIPTS_DIR, path.basename(scriptFile));
+        // Security check to prevent path traversal
+        if (!scriptPath.startsWith(SCRIPTS_DIR)) {
+          throw new Error(`Attempted to execute script outside of the designated scripts directory: ${scriptPath}`);
         }
         result = await execPromise(`bash ${scriptPath}`);
       } catch (error) {
