@@ -18,6 +18,19 @@ cd $INSTALL_DIR
 echo "Pulling latest changes from the repository..."
 sudo git pull
 
+AGENT_USER="agent_user"
+SUDOERS_FILE="/etc/sudoers.d/ubuntu-ai-agent"
+
+echo "Configuring sudo permissions for the agent..."
+
+# Grant passwordless sudo access for specific, necessary commands
+cat << EOF | sudo tee $SUDOERS_FILE
+# Permissions for the AI System Admin Agent
+$AGENT_USER ALL=(ALL) NOPASSWD: /usr/bin/apt-get update, /usr/bin/apt-get upgrade, /usr/bin/apt-get install, /usr/bin/apt-get remove, /usr/bin/apt-get autoremove, /usr/bin/apt update, /usr/bin/apt upgrade, /usr/bin/apt install, /usr/bin/apt remove, /usr/bin/apt autoremove, /usr/bin/systemctl enable, /usr/bin/systemctl start, /usr/bin/systemctl stop, /usr/bin/systemctl restart, /usr/sbin/ufw allow, /usr/sbin/ufw deny, /usr/sbin/ufw enable, /usr/sbin/useradd, /usr/sbin/usermod, /usr/sbin/userdel, /usr/bin/tee
+EOF
+
+sudo chmod 0440 $SUDOERS_FILE
+
 echo "Installing/updating Node.js dependencies..."
 sudo npm install --production
 
