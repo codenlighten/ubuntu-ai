@@ -38,7 +38,7 @@ echo "Configuring sudo permissions for '$AGENT_USER'..."
 # Grant passwordless sudo access for specific, necessary commands
 cat << EOF | sudo tee $SUDOERS_FILE
 # Permissions for the AI System Admin Agent
-$AGENT_USER ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /usr/bin/apt, /usr/bin/systemctl, /usr/sbin/ufw, /usr/sbin/useradd, /usr/sbin/usermod, /usr/sbin/userdel, /usr/bin/tee, /usr/bin/monit, /usr/bin/touch, /usr/bin/chmod, /bin/cp, /bin/mv, /bin/rm
+$AGENT_USER ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /usr/bin/apt, /usr/bin/systemctl, /usr/sbin/ufw, /usr/sbin/useradd, /usr/sbin/usermod, /usr/sbin/userdel, /usr/bin/tee, /usr/bin/monit, /usr/bin/touch, /usr/bin/chmod, /bin/cp, /bin/mv, /bin/rm, /usr/bin/dpkg
 EOF
 
 sudo chmod 0440 $SUDOERS_FILE
