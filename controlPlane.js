@@ -22,9 +22,8 @@ export async function executeSystemAction(step) {
   const { action, details } = step;
   let result;
 
-  // Use a dedicated user for agent actions where possible
-  const AGENT_USER = process.env.AGENT_USER || 'root'; 
-  const sudo = AGENT_USER === 'root' ? 'sudo' : `sudo -u ${AGENT_USER}`;
+  // System-level commands require root privileges.
+  const sudo = 'sudo';
 
   switch (action) {
     case "update_system":
