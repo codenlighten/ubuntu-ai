@@ -1,4 +1,4 @@
-import StructuredResponseGenerator from "./StructuredResponseGenerator.js";
+import { generateStructuredResponse } from "./StructuredResponse.js";
 
 const RELEVANT_RESULTS_SCHEMA = {
   type: "object",
@@ -23,7 +23,8 @@ const RELEVANT_RESULTS_SCHEMA = {
 
 export default class RelevantResults {
   constructor(apiKey) {
-    this.generator = new StructuredResponseGenerator(apiKey);
+    // The apiKey is passed to the constructor but is no longer needed here,
+    // as generateStructuredResponse will use the one from the environment.
   }
 
   /**
@@ -61,11 +62,11 @@ export default class RelevantResults {
       const prompt = `Analyze these search results for relevance to the topic "${topic}" with focus on "${subTopic}". 
       Score each result on a scale of 1-10 and return only the most relevant ones (max ${maxResults}).`;
 
-      const response = await this.generator.generateStructuredResponse(
-        prompt,
-        RELEVANT_RESULTS_SCHEMA,
-        relevanceContext
-      );
+      const response = await generateStructuredResponse({
+        query: prompt,
+        schema: RELEVANT_RESULTS_SCHEMA,
+        context: relevanceContext
+      });
 
       // Sort results by relevance score (highest first) and return them
       if (response && response.results && Array.isArray(response.results)) {
@@ -82,10 +83,10 @@ export default class RelevantResults {
   }
 
   async generateRelevantResults(query, context = "") {
-    return this.generator.generateStructuredResponse(
+    return generateStructuredResponse({
       query,
-      RELEVANT_RESULTS_SCHEMA,
+      schema: RELEVANT_RESULTS_SCHEMA,
       context
-    );
+    });
   }
 }
